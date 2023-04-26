@@ -7,5 +7,11 @@ import { Users, UsersDocument } from './schema/user-schema';
 export class UserService {
   constructor(
     @InjectModel(Users.name) private userModel: Model<UsersDocument>,
-  ) {}
+  ) {
+    console.log(Users.name);
+  }
+
+  async getAll() {
+    return await this.userModel.find().exec();
+  }
 }
