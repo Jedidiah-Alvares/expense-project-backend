@@ -7,11 +7,24 @@ import { Users, UsersDocument } from './schema/user-schema';
 export class UserService {
   constructor(
     @InjectModel(Users.name) private userModel: Model<UsersDocument>,
-  ) {
-    console.log(Users.name);
+  ) {}
+
+  // add new users
+  async create(user: Users) {
+    const newUser = new this.userModel(user);
+    return await newUser.save();
   }
 
-  async getAll() {
-    return await this.userModel.find().exec();
+  // verify username for sign up feature
+  async getByname(name: string) {
+    return await this.userModel.find({ name: name });
+  }
+
+  // verify legitimate users for sign in feature
+  async verify(user: Users) {
+    return await this.userModel.find({
+      name: user.name,
+      password: user.password,
+    });
   }
 }
