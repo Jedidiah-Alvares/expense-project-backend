@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { ExpenseService } from './expense.service';
 import { Expenses } from './schema/expense-schema';
@@ -21,20 +22,27 @@ export class ExpenseController {
   }
 
   // filter by category and return weekly expense
-  @Get('/getweekly/:name/:category')
-  async getWeeklyExpense(
-    @Param('name') name: string,
-    @Param('category') category: string,
-  ) {
-    return await this.expenseService.getWeeklyExpense(name, category);
+  @Get('/getWeekly/:name/:category/:num')
+  async getWeeklyExpense(@Param('name') name: string, @Param('category') category: string, @Param('num') num: number) {
+    return await this.expenseService.getWeeklyExpense(name, category, num);
   }
 
   // filter by category and return monthly expense
-  @Get('/getmonthly/:name/:category')
+  @Get('/getMonthly/:name/:category/:num')
   async getMonthlyExpense(
     @Param('name') name: string,
     @Param('category') category: string,
+    @Param('num') num: number,
   ) {
-    return await this.expenseService.getMonthlyExpense(name, category);
+    return await this.expenseService.getMonthlyExpense(name, category, num);
+  }
+
+  @Get('/getMonthly/:name/:category/:month/:year')
+  async getMonthlyBudget(
+    @Param('name') name: string,
+  @Param('category') category: string,
+  @Param('month') month: number,
+  @Param('year') year: number){
+    return await this.expenseService.getMonthlyBudget(name, category, month, year)
   }
 }

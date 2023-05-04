@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { Expenses, ExpensesDocument } from './schema/expense-schema';
 import { Model } from 'mongoose';
@@ -13,8 +14,8 @@ export class ExpenseService {
     return await this.expenseModel
       .find({ name: user })
       .sort({ date: -1 }) // get latest records
-      .limit(6) // get 6 records
-      .skip(num); // skips the "num" number of records
+      .skip(num) // skips the "num" number of records
+      .limit(6); // get 6 records
   }
 
   // adds the new expense
@@ -24,7 +25,8 @@ export class ExpenseService {
   }
 
   // filter by category and return weekly expense
-  async getWeeklyExpense(name: string, category: string) {
+  async getWeeklyExpense(name: string, category: string, num: number) {
+
     return await this.expenseModel
       .aggregate([
         {
@@ -62,11 +64,13 @@ export class ExpenseService {
           },
         },
       ])
-      .sort({ weekEnd: -1 });
+      .sort({ weekEnd: -1 })
+      .skip(Number(num)) // skips the "num" number of records;
+      .limit(11); // get 11 records
   }
 
   // filter by category and return monthly expense
-  async getMonthlyExpense(name: string, category: string) {
+  async getMonthlyExpense(name: string, category: string, num: number) {
     return await this.expenseModel
       .aggregate([
         {
@@ -89,6 +93,35 @@ export class ExpenseService {
           },
         },
       ])
-      .sort({ year: -1, month: -1 });
+      .sort({ year: -1, month: -1 })
+      .skip(Number(num)) // skips the "num" number of records;
+      .limit(11); // get 6 records
+  }
+
+  async getMonthlyBudget(name: string,category: string,month: number,year: number){
+    return await this.expenseModel
+      .aggregate([
+        {
+          $match: { name: name, category: category },
+        },
+        {
+          $group: {
+            _id: {
+              month: { $month: '$date' },
+              year: { $year: '$date' },
+            },
+            totalAmount: { $sum: '$expense' },
+          },
+        },
+        {
+          $match:{'_id.month':Number(month), '_id.year': Number(year) }
+        },
+        {
+          $project: {
+            
+            totalAmount: 1,
+          },
+        },
+      ])
   }
 }
