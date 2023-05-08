@@ -37,6 +37,7 @@ export class ExpenseController {
     return await this.expenseService.getMonthlyExpense(name, category, num);
   }
 
+  // gets the monthly budget assigned to the category
   @Get('/getMonthly/:name/:category/:month/:year')
   async getMonthlyBudget(
     @Param('name') name: string,

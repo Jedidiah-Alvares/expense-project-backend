@@ -98,6 +98,7 @@ export class ExpenseService {
       .limit(11); // get 6 records
   }
 
+  // gets the monthly budget assigned to the category
   async getMonthlyBudget(name: string,category: string,month: number,year: number){
     return await this.expenseModel
       .aggregate([

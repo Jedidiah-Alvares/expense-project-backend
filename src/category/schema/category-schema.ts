@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type CategoryDocument = Category & Document;
 
-// schema of the expense model
+// schema of the category model
 @Schema({ collection: 'Category' })
 export class Category {
   @Prop()
