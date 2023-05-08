@@ -13,7 +13,7 @@ export class ExpenseService {
   async getExpenses(user: string, num: number) {
     return await this.expenseModel
       .find({ name: user })
-      .sort({ date: -1 }) // get latest records
+      .sort({ date: -1 , _id: -1}) // get latest records
       .skip(num) // skips the "num" number of records
       .limit(6); // get 6 records
   }
@@ -65,7 +65,7 @@ export class ExpenseService {
         },
       ])
       .sort({ weekEnd: -1 })
-      .skip(Number(num)) // skips the "num" number of records;
+      .skip(num) // skips the "num" number of records;
       .limit(11); // get 11 records
   }
 
@@ -94,7 +94,7 @@ export class ExpenseService {
         },
       ])
       .sort({ year: -1, month: -1 })
-      .skip(Number(num)) // skips the "num" number of records;
+      .skip(num) // skips the "num" number of records;
       .limit(11); // get 6 records
   }
 

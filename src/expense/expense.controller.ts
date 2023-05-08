@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ParseIntPipe } from '@nestjs/common';
 import { ExpenseService } from './expense.service';
 import { Expenses } from './schema/expense-schema';
 
@@ -23,7 +23,7 @@ export class ExpenseController {
 
   // filter by category and return weekly expense
   @Get('/getWeekly/:name/:category/:num')
-  async getWeeklyExpense(@Param('name') name: string, @Param('category') category: string, @Param('num') num: number) {
+  async getWeeklyExpense(@Param('name') name: string, @Param('category') category: string, @Param('num', ParseIntPipe) num: number) {
     return await this.expenseService.getWeeklyExpense(name, category, num);
   }
 
@@ -32,7 +32,7 @@ export class ExpenseController {
   async getMonthlyExpense(
     @Param('name') name: string,
     @Param('category') category: string,
-    @Param('num') num: number,
+    @Param('num', ParseIntPipe) num: number,
   ) {
     return await this.expenseService.getMonthlyExpense(name, category, num);
   }
