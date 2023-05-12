@@ -3,11 +3,8 @@ import { IsNotEmpty } from 'class-validator';
 
 export class budgetdto {
   @IsNotEmpty()
-  month: number;
+  name: string;
 
   @IsNotEmpty()
-  year: number;
-
-  @IsNotEmpty()
-  amount: number;
+  password: string;
 }

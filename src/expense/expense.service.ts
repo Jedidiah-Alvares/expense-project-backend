@@ -15,7 +15,7 @@ export class ExpenseService {
       .find({ name: user })
       .sort({ date: -1 , _id: -1}) // get latest records
       .skip(num) // skips the "num" number of records
-      .limit(6); // get 6 records
+      .limit(13); // get 6 records
   }
 
   // adds the new expense
@@ -98,6 +98,7 @@ export class ExpenseService {
       .limit(11); // get 6 records
   }
 
+  // get the monthly expense of a category for the specified month and year
   async getMonthlyBudget(name: string,category: string,month: number,year: number){
     return await this.expenseModel
       .aggregate([
@@ -123,5 +124,59 @@ export class ExpenseService {
           },
         },
       ])
+  }
+
+
+  // get the monthly expense of all category for the specified month and year
+  async getMonthExpense(name: string,month: number,year: number){
+    return await this.expenseModel
+      .aggregate([
+        {
+          $match: { name: name },
+        },
+        {
+          $group: {
+            _id: {
+              category:'$category',
+              month: { $month: '$date' },
+              year: { $year: '$date' },
+            },
+            
+            totalAmount: { $sum: '$expense' },
+          },
+        },
+        {
+          $match:{'_id.month':Number(month), '_id.year': Number(year) }
+        },
+        {
+          $project: {
+            
+            totalAmount: 1,
+          },
+        },
+      ])
+  }
+
+
+  // get expenses between 2 dates
+  async getCustomFilter(name: string, fromDate: Date, toDate: Date){
+    return await this.expenseModel.aggregate([
+      {
+        $match: {
+          name: name,
+          date:{$gte:fromDate, $lte:toDate}
+        }
+      },
+      {
+        $group:{
+          _id:{
+            category: "$category"
+          },
+
+          totalAmount: {$sum:"$expense"}
+        }
+
+      }
+    ])
   }
 }

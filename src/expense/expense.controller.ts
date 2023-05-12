@@ -2,6 +2,7 @@
 import { Controller, Get, Param, Post, Body, ParseIntPipe } from '@nestjs/common';
 import { ExpenseService } from './expense.service';
 import { Expenses } from './schema/expense-schema';
+import { customFilter } from './dto/customFilter.dto';
 
 @Controller('expense')
 export class ExpenseController {
@@ -45,4 +46,22 @@ export class ExpenseController {
   @Param('year') year: number){
     return await this.expenseService.getMonthlyBudget(name, category, month, year)
   }
+
+  @Get('/getMonthExpense/:name/:month/:year')
+  async getMonthExpense(
+    @Param('name') name: string,
+  @Param('month') month: number,
+  @Param('year') year: number){
+    return await this.expenseService.getMonthExpense(name, month, year)
+  }
+
+  @Post('/customFilter')
+  async getCustomFilter(@Body() payload:customFilter){
+    const fromDate = new Date(payload.fromDate);
+    const toDate = new Date(payload.toDate)
+    return await this.expenseService.getCustomFilter(payload.name, fromDate, toDate)
+
+  }
 }
+
+

@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty } from 'class-validator';
 
-export class budgetdto {
+export class customFilter {
   @IsNotEmpty()
-  month: number;
+  name: string;
 
   @IsNotEmpty()
-  year: number;
+  fromDate: string;
 
   @IsNotEmpty()
-  amount: number;
+  toDate: string;
 }

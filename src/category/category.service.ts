@@ -99,30 +99,6 @@ export class CategoryService {
     );
   }
 
-  async addBudget(
-    name: string,
-    category: string,
-    budget: {
-      month: number;
-      year: number;
-      amount: number;
-    },
-  ) {
-    return await this.categoryModel.updateOne(
-      {
-        name: name,
-      },
-      {
-        $push: {
-          'category.$[element].budget': budget,
-        },
-      },
-      {
-        arrayFilters: [{ 'element.name': { $eq: category } }],
-      },
-    );
-  }
-
   async editBudget(
     name: string,
     category: string,
