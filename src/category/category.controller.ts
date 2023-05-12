@@ -1,19 +1,23 @@
 import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Category } from './schema/category-schema';
+import { budgetEditdto } from './dto/budgetEdit.dto';
+import { categorydto } from './dto/category.dto';
 
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
+  // get All category
   @Get('/getAll/:name')
   async getAllCategory(@Param('name') name: string) {
     return await this.categoryService.getAllCategory(name);
   }
 
-  @Get('/get/:name')
-  async getAll(@Param('name') name: string) {
-    return await this.categoryService.getAll(name);
+  // get All category and their budgets
+  @Get('/getcategorybudget/:name')
+  async getCategoryBudget(@Param('name') name: string) {
+    return await this.categoryService.getCategoryBudget(name);
   }
 
   @Post('/add')
@@ -22,16 +26,11 @@ export class CategoryController {
   }
 
   @Put('/edit/budget/:name')
-  async editBudget(
-    @Param('name') name: string,
-    @Body() budget: { category: string; amount: number },
-  ) {
-    const budgets = await this.categoryService.getAll(name);
-    let amount = 0;
+  async editBudget(@Param('name') name: string, @Body() budget: budgetEditdto) {
+    const budgets = await this.categoryService.getCategoryBudget(name);
     let i = 0;
     for (; i < budgets.length; i++) {
       if (budgets[i]._id === budget.category) {
-        amount = budgets[i].budget;
         break;
       }
     }
@@ -43,34 +42,14 @@ export class CategoryController {
       amount: budget.amount,
     };
 
-    if (amount === -1) {
-      return await this.categoryService.addBudget(
-        name,
-        budgets[i]._id,
-        payload,
-      );
-    } else {
-      await this.categoryService.deleteBudget(name, budgets[i]._id);
-      return await this.categoryService.editBudget(
-        name,
-        budgets[i]._id,
-        payload,
-      );
-    }
+    await this.categoryService.deleteBudget(name, budgets[i]._id);
+    return await this.categoryService.editBudget(name, budgets[i]._id, payload);
   }
 
   @Put('/edit/:name')
   async editCategory(
     @Param('name') name: string,
-    @Body()
-    category: {
-      name: string;
-      budget: {
-        month: number;
-        year: number;
-        amount: number;
-      }[];
-    },
+    @Body() category: categorydto,
   ) {
     return this.categoryService.editCategory(name, category);
   }

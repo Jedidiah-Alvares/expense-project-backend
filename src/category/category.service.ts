@@ -25,50 +25,52 @@ export class CategoryService {
     ]);
   }
 
-  async getAll(name: string) {
+  async getCategoryBudget(name: string) {
     const date = new Date();
     const currentMonth = date.getMonth() + 1;
     const currentYear = date.getFullYear();
 
-    return await this.categoryModel.aggregate([
-      {
-        $match: {
-          name: name,
-        },
-      },
-      {
-        $unwind: '$category',
-      },
-      {
-        $project: {
-          _id: '$category.name',
-          budget: {
-            $last: '$category.budget',
+    return await this.categoryModel
+      .aggregate([
+        {
+          $match: {
+            name: name,
           },
         },
-      },
-      {
-        $project: {
-          _id: '$_id',
-          budget: {
-            $cond: [
-              {
-                $and: [
-                  {
-                    $eq: ['$budget.month', currentMonth],
-                  },
-                  {
-                    $eq: ['$budget.year', currentYear],
-                  },
-                ],
-              },
-              '$budget.amount',
-              -1,
-            ],
+        {
+          $unwind: '$category',
+        },
+        {
+          $project: {
+            _id: '$category.name',
+            budget: {
+              $last: '$category.budget',
+            },
           },
         },
-      },
-    ]);
+        {
+          $project: {
+            _id: '$_id',
+            budget: {
+              $cond: [
+                {
+                  $and: [
+                    {
+                      $eq: ['$budget.month', currentMonth],
+                    },
+                    {
+                      $eq: ['$budget.year', currentYear],
+                    },
+                  ],
+                },
+                '$budget.amount',
+                -1,
+              ],
+            },
+          },
+        },
+      ])
+      .sort({ budget: -1 });
   }
 
   async addCategory(category: Category) {
@@ -93,30 +95,6 @@ export class CategoryService {
         $push: {
           category: category,
         },
-      },
-    );
-  }
-
-  async addBudget(
-    name: string,
-    category: string,
-    budget: {
-      month: number;
-      year: number;
-      amount: number;
-    },
-  ) {
-    return await this.categoryModel.updateOne(
-      {
-        name: name,
-      },
-      {
-        $push: {
-          'category.$[element].budget': budget,
-        },
-      },
-      {
-        arrayFilters: [{ 'element.name': { $eq: category } }],
       },
     );
   }
