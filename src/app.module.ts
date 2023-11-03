@@ -9,7 +9,7 @@ import { UserService } from './user/user.service';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://expense:Qwerty1234@cluster0.c0ne8dh.mongodb.net/expense?retryWrites=true&w=majority',
+      '',
     ),
     UserModule,
   ],
